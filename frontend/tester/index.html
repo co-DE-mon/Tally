@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ledger API tester</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Ledger API tester</h1>
+      <p class="note">For manual testing against the test database. The page checks nothing itself, so you see exactly what the API accepts and refuses.</p>
+    </div>
+    <label class="base">API address
+      <input id="base" value="http://localhost:8000" spellcheck="false">
+    </label>
+  </header>
+
+  <div class="layout">
+    <main class="forms">
+      <section>
+        <h2>Create an account</h2>
+        <form id="create-account">
+          <label>Name <input name="name" autocomplete="off"></label>
+          <label>Starting balance <span class="hint">the API must ignore this</span>
+            <input name="balance" class="num" placeholder="leave empty, or try 999" autocomplete="off">
+          </label>
+          <button>Create account <code>POST /accounts</code></button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Add a transaction</h2>
+        <form id="add-transaction">
+          <label>Account ID <input name="account_id" class="acct num" autocomplete="off"></label>
+          <div class="pair">
+            <label>Type
+              <select name="type">
+                <option>credit</option><option>debit</option><option>refund</option>
+              </select>
+            </label>
+            <label>Amount <input name="amount" class="num" value="10.00" autocomplete="off"></label>
+          </div>
+          <label>Description <input name="description" autocomplete="off"></label>
+          <label>Reference ID <input name="reference_id" class="num" autocomplete="off"></label>
+          <div class="actions">
+            <button>Add transaction <code>POST /accounts/{id}/transactions</code></button>
+            <button type="button" class="quiet" data-fill="ref">Generate reference</button>
+          </div>
+        </form>
+      </section>
+
+      <section>
+        <h2>Check a balance</h2>
+        <form id="balance">
+          <label>Account ID <input name="account_id" class="acct num" autocomplete="off"></label>
+          <button>Check balance <code>GET /accounts/{id}/balance</code></button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Read the history</h2>
+        <form id="history">
+          <label>Account ID <input name="account_id" class="acct num" autocomplete="off"></label>
+          <div class="trio">
+            <label>Type
+              <select name="type"><option value="">any</option><option>credit</option><option>debit</option></select>
+            </label>
+            <label>Page <input name="page" class="num" value="1" autocomplete="off"></label>
+            <label>Per page <input name="limit" class="num" value="20" autocomplete="off"></label>
+          </div>
+          <button>Load history <code>GET /accounts/{id}/transactions</code></button>
+        </form>
+        <div id="history-table"></div>
+      </section>
+
+      <section>
+        <h2>Transfer money</h2>
+        <form id="transfer">
+          <label>From account <input name="source_account_id" class="acct num" autocomplete="off"></label>
+          <label>To account <input name="destination_account_id" class="num" autocomplete="off"></label>
+          <label>Amount <input name="amount" class="num" value="10.00" autocomplete="off"></label>
+          <label>Description <input name="description" autocomplete="off"></label>
+          <label>Reference ID <input name="reference_id" class="num" autocomplete="off"></label>
+          <div class="actions">
+            <button>Transfer <code>POST /transfers</code></button>
+            <button type="button" class="quiet" data-fill="ref">Generate reference</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <aside class="tape" aria-live="polite">
+      <div class="reading">
+        <div id="status" class="status idle">—</div>
+        <div id="request" class="request">No request sent yet</div>
+      </div>
+      <pre id="out">Send a request and the API's answer appears here.</pre>
+      <h2>Earlier requests</h2>
+      <ol id="log"></ol>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
